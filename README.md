@@ -5,7 +5,7 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
 - Collaborative behaviors achieved by running the decentralized macro-action-based policies learned in our approaches in a box pushing domain and a warehouse domain:
 
 <p align="center">
-  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma10.gif" width="70%">
+  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma10.mov" width="70%">
 </p>
 
 ## Demo Videos
