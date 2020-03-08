@@ -66,7 +66,7 @@ The centralized Q-net is first trained purely using the centralized experiences,
   ```
 ## Dec-HDDRQN with Mac-CERTs and Cen-DDRQN with Mac-JERTs
 
-These two methods are respectively the pure decentralized learning framework and the pure centralized learning framework for macro-action-based domains, proposed in our [CoRL2019 paper](https://drive.google.com/file/d/1R5bh7Hqs_Dhzz7FMmPP8TmMmk_IppcWL/view)
+These two methods are respectively the pure decentralized learning framework and the pure centralized learning framework for macro-action-based domains, proposed in our [CoRL2019 paper](https://drive.google.com/file/d/1R5bh7Hqs_Dhzz7FMmPP8TmMmk_IppcWL/view). Here, we only provide the example command for runing these two algorithms in the warehouse domain. Regarding the details, please refer to the paper or the [MacDeepMARL repo](https://github.com/yuchen-x/MacDeepMARL)
 
 
 ## Demo Videos
