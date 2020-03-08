@@ -5,13 +5,13 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
 - The decentralized macro-action-based policies learned via **MacDec-MADDRQN** enable the agents to collaboratively push the big box for higher credits:
 
 <p align="center">
-  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma10.gif" width="25%" hspace="40">
-  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma30.GIF" width="25%" hspace="40">
+  <img src="https://github.com/yuchen-x/gifs/blob/master/bpma10.gif" width="25%" hspace="40">
+  <img src="https://github.com/yuchen-x/gifs/blob/master/bpma30.GIF" width="25%" hspace="40">
 </p>
 
 - A team of robots collaborate to bring the correct tools to a human at the right time by running the decentralized macro-action-based policies learned via **Parallel-MacDec-MADDRQN**:
 <p align="center">
-  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/osd.GIF" width="50%">
+  <img src="https://github.com/yuchen-x/gifs/blob/master/osd.GIF" width="50%">
 </p>
 
 ## Installation
@@ -20,6 +20,11 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
   ```
   cd Anaconda_Env/
   conda env create -f icra2020.yml
+  ```
+- To install the python module:
+  ```
+  cd MacDec-via-Cen
+  pip install -e .
   ```
 
 ## Demo Videos
