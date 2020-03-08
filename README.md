@@ -21,6 +21,11 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
   cd Anaconda_Env/
   conda env create -f icra2020.yml
   ```
+- To install the python module:
+  ```
+  cd MacDec-via-Cen
+  pip install -e .
+  ```
 
 ## Demo Videos
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
