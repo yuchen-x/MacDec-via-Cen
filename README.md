@@ -11,7 +11,7 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
 
 - A team of robots collaborate to bring the correct tools to a human at the right time by running the decentralized macro-action-based policies learned via **Parallel-MacDec-MADDRQN**:
 <p align="center">
-  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/osd.GIF" width="50%">
+  <img src="https://github.com/yuchen-x/gifs/blob/master/osd.GIF" width="50%">
 </p>
 
 ## Installation
