@@ -2,7 +2,7 @@
 
 In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new macro-action-based decentralized multi-agent double deep recurrent Q-net (**MacDec-MADDRQN**) which adopts *centralized trainning with decentralized execution* by allowing each decentralized Q-net update to use a centralized Q-net for action selection. In order to balance centralized and decentralized exploration, a general version, called **Parallel-MacDec-MADDRQN**, is also proposed. The code in this repo is to implement these two algorithms. 
 
-- Collaborative behaviors achieved by running the decentralized macro-action-based policies learned in our approaches in a box pushing domain and a warehouse domain:
+- The decentralized macro-action-based policies learned in our approaches enable the agents to collaboratively push the big box for higher credits:
 
 <p align="center">
   <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma10.mov" width="70%">
