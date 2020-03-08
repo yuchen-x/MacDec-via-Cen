@@ -75,6 +75,7 @@ These two methods are respectively the pure decentralized learning framework and
 
 - Cen-DDRQN
   ```
+  ma_cen_condi_ddrqn.py --env_name=OSD_S_4  --env_terminate_step=150 --batch_size=16 --mlp_layer_size=32 --rnn_h_size=64 --train_freq=30 --total_epi=40000 --replay_buffer_size=1000 --l_rate=0.0006 --start_train=2 --discount=1.0 --sample_epi --h_explore --dynamic_h --eps_l_d --eps_l_d_steps=6000 --eps_end=0.1 --save_dir=warehouse_cen_ddrqn --seed=0 --run_id=0
   ```
 
 
