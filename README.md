@@ -5,7 +5,7 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
 - The decentralized macro-action-based policies learned in our approaches enable the agents to collaboratively push the big box for higher credits:
 
 <p align="center">
-  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma10.gif" width="25%">
+  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma10.gif" width="25%" hspace="40">
   <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma10.gif" width="25%">
 </p>
 
