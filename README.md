@@ -64,6 +64,7 @@ The centralized Q-net is first trained purely using the centralized experiences,
   ```
   ma_dec_cen_hddrqn_sep.py --env_name=OSD_S_4 --env_terminate_step=150 --batch_size=16 --dec_rnn_h_size=64 --cen_rnn_h_size=64 --train_freq=30 --total_epi=40000 --replay_buffer_size=1000 --eps_l_d_steps=6000 --l_rate=0.0006 --discount=1.0 --start_train=2 --l_mode=0 --eps_end=0.1 --h_explore --sample_epi --dynamic_h --eps_l_d --save_dir=warehouse_parallel --seed=0 --run_id=0
   ```
+## Dec-HDDRQN with Mac-CERTs and Cen-DDRQN with Mac-JERTs
 
 
 ## Demo Videos
