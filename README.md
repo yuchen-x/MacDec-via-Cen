@@ -11,6 +11,7 @@ If you used this code for your reasearch or found it helpful, please consider ci
     booktitle = "3rd Annual Conference on Robot Learning",
     year = "2019"
 }
+
 @InProceedings{xiao_icra_2020,
     author = "Xiao, Yuchen and Hoffman, Joshua and Xia, Tian and Amato, Christopher",
     title = "Learning Multi-Robot Decentralized Macro-Action-Based Policies via a Centralized Q-Net",
