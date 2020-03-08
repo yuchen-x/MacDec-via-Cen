@@ -34,6 +34,8 @@ Use either decentralized Q-nets or centralized Q-net as the exploration policy t
   <img src="https://github.com/yuchen-x/gifs/blob/master/new-double-q.png" width="50%">
 </p>
 
+where, the target value for updating each decentralized macro-action Q-net is calculated by using a centralized Q-net for macro-action selection and the corresponding decentralized Q-net for value estimation.
+
 ## Demo Videos
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
 
