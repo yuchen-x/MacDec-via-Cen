@@ -58,7 +58,7 @@ This approach differs **MacDec-MADDRQN** in the way that two parallel environmen
   <img src="https://github.com/yuchen-x/gifs/blob/master/Parallel-MacDec-MADDRQN.png" width="70%">
 </p>
 
-The centralized Q-net is first trained purely using the centralized experiences, while each decentralized Q-net is the optimized using the above new double Q-update rule. 
+The centralized Q-net is first trained purely using the centralized experiences, while each decentralized Q-net is then optimized using the above new double Q-update rule. 
 
 
 ## Demo Videos
