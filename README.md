@@ -6,7 +6,7 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
 
 <p align="center">
   <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma10.gif" width="25%" hspace="40">
-  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma10.gif" width="25%">
+  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma10.gif" width="25%" hspace="40">
 </p>
 
 ## Demo Videos
