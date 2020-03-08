@@ -4,6 +4,9 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
 
 The advantages and the practical nature of our methods are demonstrated by achieving near-centralized results in simulation and having real robots accomplish a warehouse tool delivery task in an efficient way.
 
+## Demo Videos
+Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
+
 ## Paper Citation
 If you used this code for your reasearch or found it helpful, please consider citing the following paper:
 ```
