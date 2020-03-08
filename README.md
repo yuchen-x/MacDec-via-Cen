@@ -9,6 +9,11 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
   <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/bpma30.GIF" width="25%" hspace="40">
 </p>
 
+- A team of robots collaborate to bring the correct tools to a human at the right time by running the decentralized macro-action-based policies learned via **Parallel-MacDec-MADDRQN**:
+<p align="center">
+  <img src="https://github.com/yuchen-x/MacDec-via-Cen/blob/master/images/osd.GIF" width="25%" hspace="40">
+</p>
+
 ## Demo Videos
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
 
