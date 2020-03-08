@@ -27,6 +27,13 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
   pip install -e .
   ```
 
+## MacDec-DDRQN
+Use either decentralized Q-nets or centralized Q-net as the exploration policy to generate trainning data; Each decentralized Q-net is then optimized via a novel double-Q updating rule by minimizing the loss:
+
+<p align="center">
+  <img src="https://github.com/yuchen-x/gifs/blob/master/new-double-q.png" width="50%">
+</p>
+
 ## Demo Videos
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
 
