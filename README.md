@@ -77,7 +77,40 @@ These two methods are respectively the pure decentralized learning framework and
   ```
   ma_cen_condi_ddrqn.py --env_name=OSD_S_4  --env_terminate_step=150 --batch_size=16 --mlp_layer_size=32 --rnn_h_size=64 --train_freq=30 --total_epi=40000 --replay_buffer_size=1000 --l_rate=0.0006 --start_train=2 --discount=1.0 --sample_epi --h_explore --dynamic_h --eps_l_d --eps_l_d_steps=6000 --eps_end=0.1 --save_dir=warehouse_cen_ddrqn --seed=0 --run_id=0
   ```
+## How to Run in a New Domain
 
+- Encode the new macro/primitve-action domain as a gym env;
+- Add "obs_size", "n_action" and "action_spaces" as properties into the env class;
+- Let the step function return <a, o', r, t, v> instead of <o', r, t>, where a is the current macro/primitve action; o' is the new obs; r is the reward; t is termination; v is a binary value indicate whether the macro/primitive action terminates or not. In primitive-action version, v should be always 1. The dimension of "a, o', v" should be equal to the number of agents in the domain.
+
+## Visualization of the Trained Policies in Simulation
+
+- Box Pushing (10 x 10)
+  ```
+  cd ./test/
+  python test_bp_ma.py --grid_dim 10 10
+  ```
+- Box Pushing (30 x 30)
+  ```
+  cd ./test/
+  python test_bp_ma.py --grid_dim 30 30
+  ```
+
+- Warehouse Tool Delivery
+  ```
+  ```
+
+## Code Structure
+- `./scripts/ma_hddrqn.py` the main training loop for the decentralized learning method
+- `./scripts/ma_cen_ddrqn.py` the main training loop for the unconditional centralized learning method 
+- `./scripts/ma_cen_condi_ddrqn.py`the main training loop for the conditional centralized learning method
+- `./src/rlmamr/method_name` the source code for each corresponding method
+- `./src/rlmamr/method_name/team.py` the class for a team of agents with useful functions for learning
+- `./src/rlmamr/method_name/learning_methods.py` core code for the algorithm
+- `./src/rlmamr/method_name/env_runner.py` multi-processing for parallel envs
+- `./src/rlmamr/method_name/model.py` the neural network module
+- `./src/rlmamr/method_name/utils/` other useful functions
+- `./src/rlmamr/my_env` code for each domain problem
 
 ## Demo Videos
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
