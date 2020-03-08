@@ -66,7 +66,16 @@ The centralized Q-net is first trained purely using the centralized experiences,
   ```
 ## Dec-HDDRQN with Mac-CERTs and Cen-DDRQN with Mac-JERTs
 
-These two methods are respectively the pure decentralized learning framework and the pure centralized learning framework for macro-action-based domains, proposed in our [CoRL2019 paper](https://drive.google.com/file/d/1R5bh7Hqs_Dhzz7FMmPP8TmMmk_IppcWL/view). Here, we only provide the example command for runing these two algorithms in the warehouse domain. Regarding the details, please refer to the paper or the [MacDeepMARL repo](https://github.com/yuchen-x/MacDeepMARL)
+These two methods are respectively the pure decentralized learning framework and the pure centralized learning framework for macro-action-based domains, proposed in our [CoRL2019 paper](https://drive.google.com/file/d/1R5bh7Hqs_Dhzz7FMmPP8TmMmk_IppcWL/view). Here, we only provide the example commands for runing these two algorithms in the warehouse domain. Regarding the details, please refer to the paper or the [MacDeepMARL repo](https://github.com/yuchen-x/MacDeepMARL).
+
+- Dec-HDDRQN
+  ```
+  ma_hddrqn.py --env_name=OSD_S_4  --env_terminate_step=150 --batch_size=16 --mlp_layer_size=32 --rnn_h_size=64 --train_freq=30 --total_epi=40000 --replay_buffer_size=1000 --l_rate=0.0006 --start_train=2 --discount=1.0 --sample_epi --h_explore --dynamic_h --init_h=0.2 --end_h=0.4 --h_stable_at=6000 --eps_l_d --eps_l_d_steps=6000 --eps_end=0.1 --save_dir=warehouse_dec_hddrqn --seed=0 --run_id=0
+  ```
+
+- Cen-DDRQN
+  ```
+  ```
 
 
 ## Demo Videos
