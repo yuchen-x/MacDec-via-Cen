@@ -36,6 +36,12 @@ Use either decentralized Q-nets or centralized Q-net as the exploration policy t
 
 where, the target value for updating each decentralized macro-action Q-net is calculated by using a centralized Q-net for macro-action selection and the corresponding decentralized Q-net for value estimation.
 
+Training in Box Pushing domain and the warehouse tool delivery domain (single run):
+- Box Pushing (10 x 10)
+```
+ma_dec_cen_hddrqn.py --grid_dim 10 10 --env_name=BP_MA --env_terminate_step=100 --trace_len=15 --batch_size=128 --dec_rnn_h_size=32 --cen_rnn_h_size=64 --train_freq=15 --total_epi=15000 --replay_buffer_size=80000 --l_rate=0.001 --discount=0.98 --start_train=2 --l_mode=0 --cen_explore --eps_end=0.1 --dynamic_h --eps_l_d --save_dir=bpma10 --seed=0 --run_id=0
+```
+
 ## Demo Videos
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
 
