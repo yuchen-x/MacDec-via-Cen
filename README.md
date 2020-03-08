@@ -44,7 +44,7 @@ ma_dec_cen_hddrqn.py --grid_dim 10 10 --env_name=BP_MA --env_terminate_step=100 
 
 - Box Pushing (30 x 30)
 ```
-ma_dec_cen_hddrqn.py --grid_dim 10 10 --env_name=BP_MA --env_terminate_step=200 --trace_len=45 --batch_size=128 --dec_rnn_h_size=32 --cen_rnn_h_size=64 --train_freq=45 --total_epi=15000 --replay_buffer_size=80000 --l_rate=0.001 --discount=0.98 --start_train=2 --l_mode=0 --cen_explore --eps_end=0.1 --dynamic_h --eps_l_d --save_dir=bpma30 --seed=0 --run_id=0
+ma_dec_cen_hddrqn.py --grid_dim 30 30 --env_name=BP_MA --env_terminate_step=200 --trace_len=45 --batch_size=128 --dec_rnn_h_size=32 --cen_rnn_h_size=64 --train_freq=45 --total_epi=15000 --replay_buffer_size=80000 --l_rate=0.001 --discount=0.98 --start_train=2 --l_mode=0 --cen_explore --eps_end=0.1 --dynamic_h --eps_l_d --save_dir=bpma30 --seed=0 --run_id=0
 ```
 
 ## Demo Videos
