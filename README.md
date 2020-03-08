@@ -58,6 +58,8 @@ This approach differs **MacDec-MADDRQN** in the way that two parallel environmen
   <img src="https://github.com/yuchen-x/gifs/blob/master/Parallel-MacDec-MADDRQN.png" width="70%">
 </p>
 
+<img src="https://latex.codecogs.com/gif.latex?P(s | O_t )/>
+
 ## Demo Videos
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
 
