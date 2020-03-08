@@ -98,6 +98,8 @@ These two methods are respectively the pure decentralized learning framework and
 
 - Warehouse Tool Delivery
   ```
+  cd ./test/
+  python test_osd_s_policy_dec.py
   ```
 
 ## Code Structure
