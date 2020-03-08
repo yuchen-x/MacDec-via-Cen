@@ -52,13 +52,11 @@ Training in Box Pushing domain and the warehouse tool delivery domain (single ru
   ```
 
 ## Parallel-MacDec-MADDRQN
-This approach differs **MacDec-MADDRQN** in the way that two parallel environments are involved with agents respectively performing centralized exploration and decentralized exploration in each. 
+This approach differs **MacDec-MADDRQN** in the way that two parallel environments are involved with agents respectively performing centralized exploration (cen-e-greedy) and decentralized exploration (dec-e-greedy) in each. 
 
 <p align="center">
   <img src="https://github.com/yuchen-x/gifs/blob/master/Parallel-MacDec-MADDRQN.png" width="70%">
 </p>
-
-<img src="https://latex.codecogs.com/gif.latex?P(s | O_t )/>
 
 ## Demo Videos
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
