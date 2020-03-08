@@ -4,6 +4,8 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
 
 The advantages and the practical nature of our methods are demonstrated by achieving near-centralized results in simulation and having real robots accomplish a warehouse tool delivery task in an efficient way.
 
+- Collaborative behaviors achieved by running the decentralized macro-action-based policies learned in our approaches in a box pushing domain and a warehouse domain:
+
 ## Demo Videos
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
 
