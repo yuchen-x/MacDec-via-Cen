@@ -1,6 +1,6 @@
 # Learning Multi-Robot Decentralized Macro-Action-Based Policies via a Centralized Q-Net
 
-In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new macro-action-based decentralized multi-agent double deep recurrent Q-net (**MacDec-MADDRQN**) which adopts *centralized trainning with decentralized execution* by allowing each decentralized Q-net update to use a centralized Q-net for action selection. In order to balance centralized and decentralized exploration, a general version, called **Parallel-MacDec-MADDRQN**, is also proposed. The code in this repo is to implement these two algorithms. 
+In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new macro-action-based decentralized multi-agent double deep recurrent Q-net (**MacDec-MADDRQN**) which adopts *centralized training with decentralized execution* by allowing each decentralized Q-net update to use a centralized Q-net for action selection. In order to balance centralized and decentralized exploration, a general version, called **Parallel-MacDec-MADDRQN**, is also proposed. The code in this repo is to implement these two algorithms. 
 
 - The decentralized macro-action-based policies learned via **MacDec-MADDRQN** enable the agents to collaboratively push the big box for higher credits:
 
@@ -28,7 +28,7 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
   ```
 
 ## MacDec-MADDRQN
-Use either decentralized Q-nets or centralized Q-net as the exploration policy to generate trainning data; Each decentralized Q-net is then optimized via a novel double-Q update rule by minimizing the loss:
+Use either decentralized Q-nets or centralized Q-net as the exploration policy to generate training data; Each decentralized Q-net is then optimized via a novel double-Q update rule by minimizing the loss:
 
 <p align="center">
   <img src="https://github.com/yuchen-x/gifs/blob/master/new-double-q.png" width="60%">
@@ -103,12 +103,13 @@ These two methods are respectively the pure decentralized learning framework and
   ```
 
 ## Code Structure
-- `./scripts/ma_hddrqn.py` the main training loop for the decentralized learning method
-- `./scripts/ma_cen_ddrqn.py` the main training loop for the unconditional centralized learning method 
-- `./scripts/ma_cen_condi_ddrqn.py`the main training loop for the conditional centralized learning method
+- `./scripts/ma_hddrqn.py` the main training loop of Dec-HDDRQN
+- `./scripts/ma_cen_condi_ddrqn.py`the main training loop of Cen-DDRQN
+- `./scripts/ma_dec_cen_hddrqn.py` the main training loop of MacDec-MADDRQN
+- `./scripts/ma_dec_cen_hddrqn_sep.py` the main training loop of Parallel-MacDec-MADDRQN
 - `./src/rlmamr/method_name` the source code for each corresponding method
-- `./src/rlmamr/method_name/team.py` the class for a team of agents with useful functions for learning
-- `./src/rlmamr/method_name/learning_methods.py` core code for the algorithm
+- `./src/rlmamr/method_name/team.py` the class for a team of agents with feature functions for training
+- `./src/rlmamr/method_name/learning_methods.py` core code for the corresponding algorithm
 - `./src/rlmamr/method_name/env_runner.py` multi-processing for parallel envs
 - `./src/rlmamr/method_name/model.py` the neural network module
 - `./src/rlmamr/method_name/utils/` other useful functions
@@ -118,7 +119,7 @@ These two methods are respectively the pure decentralized learning framework and
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
 
 ## Paper Citation
-If you used this code for your reasearch or found it helpful, please consider citing the following paper:
+If you used this code for your reasearch or found it helpful, please consider citing the following two papers:
 ```
 @InProceedings{xiao_corl_2019,
     author = "Xiao, Yuchen and Hoffman, Joshua and Amato, Christopher",
