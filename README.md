@@ -28,7 +28,7 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
   ```
 
 ## MacDec-MADDRQN
-Use either decentralized Q-nets or centralized Q-net as the exploration policy to generate trainning data; Each decentralized Q-net is then optimized via a novel double-Q updating rule by minimizing the loss:
+Use either decentralized Q-nets or centralized Q-net as the exploration policy to generate trainning data; Each decentralized Q-net is then optimized via a novel double-Q update rule by minimizing the loss:
 
 <p align="center">
   <img src="https://github.com/yuchen-x/gifs/blob/master/new-double-q.png" width="50%">
@@ -50,6 +50,9 @@ Training in Box Pushing domain and the warehouse tool delivery domain (single ru
   ```
   ma_dec_cen_hddrqn.py --env_name=OSD_S_4 --env_terminate_step=150 --batch_size=16 --dec_rnn_h_size=64 --cen_rnn_h_size=64 --train_freq=30 --total_epi=40000 --replay_buffer_size=1000 --eps_l_d_steps=6000 --l_rate=0.0006 --discount=1.0 --start_train=2 --l_mode=0 --eps_end=0.1 --cen_explore --h_explore --sample_epi --dynamic_h --eps_l_d --save_dir=warehouse --seed=0 --run_id=0
   ```
+
+## Parallel-MacDec-MADDRQN
+This approach differs **MacDec-MADDRQN** in the way that two parallel environments are involved with agents respectively performing centralized exploration and decentralized exploration in each. 
 
 ## Demo Videos
 Please check our [YouTube channel](https://www.youtube.com/channel/UCQxF16jC0cO8uIWrsbGOmGg/) for the entire real robots videos.
