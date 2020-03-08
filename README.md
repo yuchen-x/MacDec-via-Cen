@@ -55,7 +55,7 @@ Training in Box Pushing domain and the warehouse tool delivery domain (single ru
 This approach differs **MacDec-MADDRQN** in the way that two parallel environments are involved with agents respectively performing centralized exploration and decentralized exploration in each. 
 
 <p align="center">
-  <img src="https://github.com/yuchen-x/gifs/blob/master/Parallel-MacDec-MADDRQN.png" width="80%">
+  <img src="https://github.com/yuchen-x/gifs/blob/master/Parallel-MacDec-MADDRQN.png" width="70%">
 </p>
 
 ## Demo Videos
