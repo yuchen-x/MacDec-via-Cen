@@ -31,7 +31,7 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
 Use either decentralized Q-nets or centralized Q-net as the exploration policy to generate trainning data; Each decentralized Q-net is then optimized via a novel double-Q update rule by minimizing the loss:
 
 <p align="center">
-  <img src="https://github.com/yuchen-x/gifs/blob/master/new-double-q.png" width="80%">
+  <img src="https://github.com/yuchen-x/gifs/blob/master/new-double-q.png" width="50%">
 </p>
 
 where, the target value for updating each decentralized macro-action Q-net is calculated by using a centralized Q-net for macro-action selection and the corresponding decentralized Q-net for value estimation.
@@ -55,7 +55,7 @@ Training in Box Pushing domain and the warehouse tool delivery domain (single ru
 This approach differs **MacDec-MADDRQN** in the way that two parallel environments are involved with agents respectively performing centralized exploration and decentralized exploration in each. 
 
 <p align="center">
-  <img src="https://github.com/yuchen-x/gifs/blob/master/Parallel-MacDec-MADDRQN.png" width="50%">
+  <img src="https://github.com/yuchen-x/gifs/blob/master/Parallel-MacDec-MADDRQN.png" width="80%">
 </p>
 
 ## Demo Videos
