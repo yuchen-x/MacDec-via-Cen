@@ -27,7 +27,7 @@ In this [paper](https://arxiv.org/pdf/1909.08776.pdf), we first introduce a new 
   pip install -e .
   ```
 
-## MacDec-DDRQN
+## MacDec-MADDRQN
 Use either decentralized Q-nets or centralized Q-net as the exploration policy to generate trainning data; Each decentralized Q-net is then optimized via a novel double-Q updating rule by minimizing the loss:
 
 <p align="center">
