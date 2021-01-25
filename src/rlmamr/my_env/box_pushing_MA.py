@@ -9,374 +9,33 @@ from .box_pushing_MA_core import astar_Agent_, Box, BeliefWayPoint, MacroAction
 
 DIRECTION = [(0,1), (1,0), (0,-1), (-1,0)]
 
-class BoxPushing_simple(gym.Env):
-    
-    metadata = {
-            'render.modes': ['human', 'rgb_array'],
-            'video.frames_per_second' : 50
-            }
-
-    def __init__(self, terminate_step=100, obs_teammate=False, *args, **kwargs):
-
-        self.n_agent = 2
-
-        self.action_space = spaces.Discrete(3)
-        if not obs_teammate:
-            self.observation_space = spaces.MultiBinary(4)
-        else:
-            self.observation_space = spaces.MultiBinary(5)
-
-        # create waypoint for pushing box
-        BWP0 = BeliefWayPoint('Small_box_0_spot', 0, 1.5, 3.5)
-        BWP1 = BeliefWayPoint('Small_box_1_spot', 1, 6.5, 3.5)
-        BWP2_A0 = BeliefWayPoint('Big_box_spot_0', 2, 3.5, 3.5)
-        BWP2_A1 = BeliefWayPoint('Big_box_spot_1', 2, 4.5, 3.5)
-
-        self.BWPs = [BWP0, BWP1, BWP2_A0, BWP2_A1]
-        self.BWPs_A0 = [BWP0, BWP1, BWP2_A0]
-        self.BWPs_A1 = [BWP0, BWP1, BWP2_A1]
-
-        # def macro-actions
-        MA0 = MacroAction('GT_SB', 0, ma_bwpterm=0)
-        MA1 = MacroAction('GT_SB', 0, ma_bwpterm=1)
-        MA2 = MacroAction('GT_BB', 1, ma_bwpterm=2)
-        #MA3 = MacroAction('T_L', 3, expected_t_cost=1)
-        #MA4 = MacroAction('T_R', 4, expected_t_cost=1)
-        #MA5 = MacroAction('Stay', 3, expected_t_cost=1)
-        MA6 = MacroAction('Push', 2)
-
-        self.MAs = [MA0, MA1, MA2, MA6]
-        self.MAs_A0 = [MA0, MA2, MA6]
-        self.MAs_A1 = [MA1, MA2, MA6]
-
-        self.createAgents()
-        self.createBoxes()
-
-        self.terminate_step = terminate_step
-        self.pushing_big_box = False
-
-
-        self.viewer = None
-
-        self.single_small_box = 0.0
-        self.both_small_box = 0.0
-        self.big_box = 0.0
-        self.obs_teammate = obs_teammate
-
-    @property
-    def obs_size(self):
-        return [self.observation_space.n] *2
-
-    @property
-    def n_action(self):
-        return [a.n for a in self.action_spaces]
-
-    def action_space_sample(self, i):
-        return np.random.randint(self.action_spaces[i].n)
-
-    @property
-    def action_spaces(self):
-        return [self.action_space] * 2
-
-    def createAgents(self):
-        A0 = Agent(0, 1.5, 1.5, 1, self.BWPs_A0, self.MAs_A0)
-        A1 = Agent(1, 6.5, 1.5, 3, self.BWPs_A1, self.MAs_A1)
-
-        self.agents = [A0, A1]
-
-    def createBoxes(self):
-        SB_0 = Box(0, 1.5, 4.5, 1.0, 1.0) 
-        SB_1 = Box(1, 6.5, 4.5, 1.0, 1.0) 
-        BB_2 = Box(2, 4.0, 4.5, 1.0, 2.0) 
-
-        self.boxes = [SB_0, SB_1, BB_2]
-
-    def reset(self, debug=False):
-        self.createAgents()
-        self.createBoxes()
-        self.t = 0
-        self.count_step = 0
-        self.pushing_big_box = False
-
-        if debug:
-            self.render()
-
-        return self._getobs()
-
-    def step(self, actions, debug=False):
-
-        rewards = -0.1
-        terminate = 0
-
-        cur_actions = []
-        cur_actions_done = []
-
-        self.count_step += 1
-
-        if (actions[0] == 2) and (actions[1] == 2) and \
-                self.agents[0].cur_action_done and self.agents[1].cur_action_done and \
-                self.agents[0].ori == 0 and self.agents[1].ori == 0 and \
-                self.agents[0].cur_BWP is not None and self.agents[0].cur_BWP.idx == 2 and \
-                self.agents[1].cur_BWP is not None and self.agents[1].cur_BWP.idx == 2:
-                    self.pushing_big_box = True
-
-        if not self.pushing_big_box:
-            for idx, agent in enumerate(self.agents):
-                if not agent.cur_action_done:
-                    reward = agent.step(agent.cur_action.idx, self.boxes)
-                    cur_actions.append(agent.cur_action.idx)
-                else:
-                    reward = agent.step(actions[idx], self.boxes)
-                    cur_actions.append(actions[idx])
-                cur_actions_done.append(1 if agent.cur_action_done else 0)
-                rewards += reward
-
-        else:
-            for agent in self.agents:
-                agent.cur_action = agent.macro_actions[2]
-                agent.cur_action_done = False
-                agent.cur_action_time_left = -1.0
-                agent.ycoord += 1.0
-            self.boxes[2].ycoord += 1.0
-            if self.boxes[2].ycoord == 7.5:
-                for agent in self.agents:
-                    agent.cur_action_done = True
-            cur_actions_done.append(1 if self.agents[0].cur_action_done else 0)
-            cur_actions_done.append(1 if self.agents[1].cur_action_done else 0)
-            cur_actions.append(2)
-            cur_actions.append(2)
-
-        reward = 0.0
-        small_box = 0.0
-        for idx, box in enumerate(self.boxes):
-            if box.ycoord == 7.5:
-                terminate = 1
-                reward = reward + 10 if idx < 2 else reward + 100
-                if idx == 2:
-                    self.big_box += 1.0
-                else:
-                    small_box += 1.0
-
-        if small_box == 1.0:
-            self.single_small_box += 1.0
-        elif small_box == 2.0:
-            self.both_small_box += 1.0
-
-        rewards += reward
-
-        if debug:
-            self.render()
-            print(" ")
-            print("Actions list:")
-            print("Agent_0 \t action \t\t{}".format(self.agents[0].cur_action.name))
-            print("        \t action_t_left \t\t{}".format(self.agents[0].cur_action_time_left))
-            print("        \t action_done \t\t{}".format(self.agents[0].cur_action_done))
-            print(" ")
-            print("Agent_1 \t action \t\t{}".format(self.agents[1].cur_action.name))
-            print("        \t action_t_left \t\t{}".format(self.agents[1].cur_action_time_left))
-            print("        \t action_done \t\t{}".format(self.agents[1].cur_action_done))
-
-        observations = self._getobs(debug)
-
-        return cur_actions, observations, rewards, terminate or self.count_step == self.terminate_step, cur_actions_done
-
-    def _getobs(self, debug=False):
-
-        if self.t == 0:
-            obs = np.zeros(self.observation_space.n)
-            obs[2] = 1.0
-            self.t = 1
-            observations = [obs, obs]
-            self.old_observations = observations
-            
-            return observations
-
-        if debug:
-            print("")
-            print("Observations list:")
-
-        observations = []
-        for idx, agent in enumerate (self.agents):
-            if not agent.cur_action_done:
-                observations.append(self.old_observations[idx])
-                if debug:
-                    print("Agent_" + str(idx) + " \t small_box  \t\t{}".format(self.old_observations[idx][0]))
-                    print("          " + " \t large_box \t\t{}".format(self.old_observations[idx][1]))
-                    print("          " + " \t empty \t\t\t{}".format(self.old_observations[idx][2]))
-                    print("          " + " \t wall \t\t\t{}".format(self.old_observations[idx][3]))
-                    if self.obs_teammate:
-                        print("          " + " \t teammate \t\t{}".format(self.old_observations[idx][4]))
-                    print("")
-                continue
-
-            obs = np.zeros(self.observation_space.n)
-
-            # assume empty front
-            obs[2] = 1.0
-
-            # observe small box
-            for box in self.boxes[0:2]:
-                if box.xcoord == agent.xcoord + DIRECTION[agent.ori][0] and \
-                        box.ycoord == agent.ycoord + DIRECTION[agent.ori][1]:
-                            obs[0] = 1.0
-                            obs[2] = 0.0
-            # observe large box
-            if (self.boxes[2].xcoord+0.5 == agent.xcoord + DIRECTION[agent.ori][0] or \
-                    self.boxes[2].xcoord-0.5 == agent.xcoord + DIRECTION[agent.ori][0]) and \
-                    self.boxes[2].ycoord  == agent.ycoord + DIRECTION[agent.ori][1]:
-                        obs[1] = 1.0
-                        obs[2] = 0.0
-           
-            # observe wall
-            if agent.xcoord + DIRECTION[agent.ori][0] > 8.0 or \
-                    agent.xcoord + DIRECTION[agent.ori][0] < 0.0 or \
-                    agent.ycoord + DIRECTION[agent.ori][1] > 8.0 or \
-                    agent.ycoord + DIRECTION[agent.ori][1] < 0.0:
-                        obs[3] = 1.0
-                        obs[2] = 0.0
-            
-            # observe agent
-            if self.obs_teammate:
-                if idx == 0:
-                    teamate_idx = 1
-                else:
-                    teamate_idx = 0
-                if (agent.xcoord - self.agents[teamate_idx].xcoord)**2 + (agent.ycoord - self.agents[teamate_idx].ycoord)**2 == 1:
-                    obs[4] = 1.0
-                    if agent.xcoord + DIRECTION[agent.ori][0] == self.agents[teamate_idx].xcoord:
-                        obs[2] = 0.0
-
-            if debug:
-                    print("Agent_" + str(idx) + " \t small_box  \t\t{}".format(obs[0]))
-                    print("          " + " \t large_box \t\t{}".format(obs[1]))
-                    print("          " + " \t empty \t\t\t{}".format(obs[2]))
-                    print("          " + " \t wall \t\t\t{}".format(obs[3]))
-                    if self.obs_teammate:
-                        print("          " + " \t teammate \t\t{}".format(obs[4]))
-                    print("")
-
-            observations.append(obs)
-
-        self.old_observations = observations
-
-        return observations
-
-    def render(self, mode='human'):
-        
-        screen_width = 800
-        screen_height = 800
-        
-        if self.viewer is None:
-            from my_env import rendering
-            self.viewer = rendering.Viewer(screen_width, screen_height)
-            
-            #-------------------draw waypoints
-            for i in range(len(self.BWPs)):
-                BWP = rendering.make_circle(radius=12)
-                BWP.set_color(178.0/255.0, 34.0/255.0, 34.0/255.0)
-                BWPtrans = rendering.Transform(translation=(self.BWPs[i].xcoord*100, self.BWPs[i].ycoord*100))
-                BWP.add_attr(BWPtrans)
-                self.viewer.add_geom(BWP)
-
-            #-------------------draw goal
-            goal = rendering.FilledPolygon([(-400,-50), (-400,50), (400,50), (400,-50)])
-            goal.set_color(1.0,1.0,0.0)
-            goal_trans = rendering.Transform(translation=(400,750))
-            goal.add_attr(goal_trans)
-            self.viewer.add_geom(goal)
-
-            #-------------------draw box
-            small_box_0 = rendering.FilledPolygon([(-50,-50), (-50,50), (50,50), (50,-50)])
-            small_box_0.set_color(0.0,0.0,0.0)
-            self.small_box_0_trans = rendering.Transform(translation=(self.boxes[0].xcoord*100, self.boxes[0].ycoord*100))
-            small_box_0.add_attr(self.small_box_0_trans)
-            self.viewer.add_geom(small_box_0)
-            
-            small_box_1 = rendering.FilledPolygon([(-50,-50), (-50,50), (50,50), (50,-50)])
-            small_box_1.set_color(0.0,0.0,0.0)
-            self.small_box_1_trans = rendering.Transform(translation=(self.boxes[1].xcoord*100, self.boxes[1].ycoord*100))
-            small_box_1.add_attr(self.small_box_1_trans)
-            self.viewer.add_geom(small_box_1)
-            
-            big_box_2 = rendering.FilledPolygon([(-100,-50), (-100,50), (100,50), (100,-50)])
-            big_box_2.set_color(0.0,0.0,0.0)
-            self.big_box_2_trans = rendering.Transform(translation=(self.boxes[2].xcoord*100, self.boxes[2].ycoord*100))
-            big_box_2.add_attr(self.big_box_2_trans)
-            self.viewer.add_geom(big_box_2)
-
-            #-------------------draw agent
-            agent_0 = rendering.make_circle(radius=25.0)
-            agent_0.set_color(0.0, 153.0/255.0, 0.0)
-            self.agent_0_trans = rendering.Transform(translation=(self.agents[0].xcoord*100, self.agents[0].ycoord*100))
-            agent_0.add_attr(self.agent_0_trans)
-            self.viewer.add_geom(agent_0)
-            
-            agent_1 = rendering.make_circle(radius=25.0)
-            agent_1.set_color(0.0, 0.0, 153.0/255.0)
-            self.agent_1_trans = rendering.Transform(translation=(self.agents[1].xcoord*100, self.agents[1].ycoord*100))
-            agent_1.add_attr(self.agent_1_trans)
-            self.viewer.add_geom(agent_1)
-
-            #-------------------draw agent sensor
-            sensor_0 = rendering.FilledPolygon([(-10,-10), (-10,10), (10,10), (10,-10)])
-            sensor_0.set_color(1.0,0.0,0.0)
-            self.sensor_0_trans = rendering.Transform(translation=(self.agents[0].xcoord*100+25*DIRECTION[self.agents[0].ori][0], 
-                                                                   self.agents[0].ycoord*100+25*DIRECTION[self.agents[0].ori][1]))
-            sensor_0.add_attr(self.sensor_0_trans)
-            self.viewer.add_geom(sensor_0)
-            
-            sensor_1 = rendering.FilledPolygon([(-10,-10), (-10,10), (10,10), (10,-10)])
-            sensor_1.set_color(1.0,0.0,0.0)
-            self.sensor_1_trans = rendering.Transform(translation=(self.agents[1].xcoord*100+25*DIRECTION[self.agents[1].ori][0], 
-                                                                   self.agents[1].ycoord*100+25*DIRECTION[self.agents[1].ori][1]))
-            sensor_1.add_attr(self.sensor_1_trans)
-            self.viewer.add_geom(sensor_1)
-
-        self.small_box_0_trans.set_translation(self.boxes[0].xcoord*100, self.boxes[0].ycoord*100)
-        self.small_box_1_trans.set_translation(self.boxes[1].xcoord*100, self.boxes[1].ycoord*100)
-        self.big_box_2_trans.set_translation(self.boxes[2].xcoord*100, self.boxes[2].ycoord*100)
-        
-        self.agent_0_trans.set_translation(self.agents[0].xcoord*100, self.agents[0].ycoord*100)
-        self.agent_1_trans.set_translation(self.agents[1].xcoord*100, self.agents[1].ycoord*100)
-
-        if self.agents[0].cur_action_done or self.agents[0].cur_action.idx == 2:
-            self.sensor_0_trans.set_translation(self.agents[0].xcoord*100+25*DIRECTION[self.agents[0].ori][0], 
-                                                self.agents[0].ycoord*100+25*DIRECTION[self.agents[0].ori][1])
-            self.sensor_0_trans.set_rotation(0.0)
-        else:
-            x = self.agents[0].xcoord*100 + 25*self.agents[0].direct[0]
-            y = self.agents[0].ycoord*100 + 25*self.agents[0].direct[1]
-            angle = np.arccos(np.dot(self.agents[0].direct,np.array([1.0,0.0])))
-            angle = angle * -1.0 if self.agents[0].direct[1] < 0.0 else angle
-            self.sensor_0_trans.set_translation(x, y)
-            self.sensor_0_trans.set_rotation(angle)
-
-        if self.agents[1].cur_action_done or self.agents[1].cur_action.idx == 2:
-            self.sensor_1_trans.set_translation(self.agents[1].xcoord*100+25*DIRECTION[self.agents[1].ori][0], 
-                                                self.agents[1].ycoord*100+25*DIRECTION[self.agents[1].ori][1])
-            self.sensor_1_trans.set_rotation(0.0)
-        else:
-            x = self.agents[1].xcoord*100 + 25*self.agents[1].direct[0]
-            y = self.agents[1].ycoord*100 + 25*self.agents[1].direct[1]
-            angle = np.arccos(np.dot(self.agents[1].direct,np.array([1.0,0.0])))
-            angle = angle * -1.0 if self.agents[1].direct[1] < 0.0 else angle
-            self.sensor_1_trans.set_translation(x, y)
-            self.sensor_1_trans.set_rotation(angle)
-
-        return self.viewer.render(return_rgb_array = mode=='rgb_array')
-
 class BoxPushing_harder(gym.Env):
 
-    """1) Agent is allowed to push any small box;
+    """
+       Box Pushing Domain Description
+       ------------------------------
+
+       1) Agent is allowed to push any small box;
        2) Agent is allowed to go to any one of the two waypoints to push the big box;
-       3) Big box is only can be pushed when the two agents locating in the two waypoints seperately."""
-    
+       3) Big box is only able to be pushed when the two agents locating in the two waypoints seperately."""
+
     metadata = {
             'render.modes': ['human', 'rgb_array'],
             'video.frames_per_second' : 50
             }
 
     def __init__(self, grid_dim, terminate_step=100, random_init=False, *args, **kwargs):
+
+        """
+        Parameters
+        ----------
+        gird_dim : tuple(int, int)
+            The size of the grid world.
+        terminate_step : int
+            The maximal steps per episode.
+        random_init : bool
+            Whether to randomly initialize agents' positions.
+        """
 
         self.n_agent = 2
 
@@ -413,7 +72,6 @@ class BoxPushing_harder(gym.Env):
         MA5 = MacroAction('T_L', 5, expected_t_cost=1)
         MA6 = MacroAction('T_R', 6, expected_t_cost=1)
         MA7 = MacroAction('Stay', 7, expected_t_cost=1)
-
 
         self.MAs = [MA0, MA1, MA2, MA3, MA4, MA5, MA6, MA7]
 
@@ -494,6 +152,25 @@ class BoxPushing_harder(gym.Env):
         return self._getobs()
 
     def step(self, actions, debug=False):
+        """
+        Parameters
+        ----------
+        actions : int | List[..]
+           The discrete macro-action index for one or more agents. 
+
+        Returns
+        -------
+        cur_actions : int | List[..]
+            The discrete macro-action indice which agents are executing in the current step.
+        observations : ndarry | List[..]
+            A list of  each agent's macor-observation.
+        rewards : float
+            A global shared reward.
+        done : bool
+            Whether the current episode is over or not.
+        cur_action_done : binary (1/0) | List[..]
+            Whether each agent's curent macro-action is done or not.
+        """
 
         rewards = -0.1
         terminate = 0
@@ -503,18 +180,20 @@ class BoxPushing_harder(gym.Env):
 
         self.count_step += 1
 
-        if (actions[0] == 4) and (actions[1] == 4) and \
-                self.agents[0].cur_action_done and self.agents[1].cur_action_done and \
+        # check if agents reach the pre-condition of pushing a big box 
+        if (actions[0] == 4) and (actions[1] == 4) and self.agents[0].cur_action_done and self.agents[1].cur_action_done and \
                 self.agents[0].ori == 0 and self.agents[1].ori == 0 and \
                 ((self.agents[0].cur_BWP is not None and self.agents[0].cur_BWP.idx == 2 and self.agents[1].cur_BWP is not None and self.agents[1].cur_BWP.idx == 3) or \
-                (self.agents[0].cur_BWP is not None and self.agents[0].cur_BWP.idx == 3 and self.agents[1].cur_BWP is not None and self.agents[1].cur_BWP.idx == 2)):
+                (self.agents[0].cur_BWP is not None and self.agents[0].cur_BWP.idx == 3 and (self.agents[1].cur_BWP is not None) and self.agents[1].cur_BWP.idx == 2)):
                     self.pushing_big_box = True
 
         if not self.pushing_big_box:
             for idx, agent in enumerate(self.agents):
+                # if agent's previous macro-action is not done, continue running the current macro-action
                 if not agent.cur_action_done:
                     reward = agent.step(agent.cur_action.idx, self.boxes)
                     cur_actions.append(agent.cur_action.idx)
+                # if agent's previous macro-action is done, run the new input macro-action
                 else:
                     reward = agent.step(actions[idx], self.boxes)
                     cur_actions.append(actions[idx])
@@ -535,6 +214,7 @@ class BoxPushing_harder(gym.Env):
             cur_actions.append(4)
             cur_actions.append(4)
 
+        # compute reward
         reward = 0.0
         small_box = 0.0
         for idx, box in enumerate(self.boxes):

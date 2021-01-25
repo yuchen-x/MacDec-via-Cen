@@ -8,21 +8,54 @@ from gym import spaces
 
 class ObjSearchDelivery(gym.Env):
 
+    """Base class of object search and delivery domain"""
+
     metadata = {
             'render.modes': ['human', 'rgb_array'],
             'video.frames_per_second' : 50
             }
 
-    def __init__(self, n_objs=3, terminate_step=150, human_speed_per_step=[[18]], TB_move_speed=0.6, TB_move_noisy=0.0, 
-                 fetch_pass_obj_tc=4, fetch_look_for_obj_tc=6, delay_delivery_penalty=False, *args, **kwargs):
+    def __init__(self, 
+                 n_objs=3, 
+                 n_each_obj=1,
+                 terminate_step=150, 
+                 human_speed_per_step=[[18]], 
+                 TB_move_speed=0.6, 
+                 TB_move_noisy=0.0, 
+                 fetch_pass_obj_tc=4, 
+                 fetch_look_for_obj_tc=6, 
+                 delay_delivery_penalty=False, *args, **kwargs):
+
+        """
+        Parameters
+        ----------
+        n_objs : int
+            The number of object's types in the domain.
+        n_each_obj : int
+            The number of objects per object's type
+        terminate_step : int
+            The maximal steps per episode.
+        TB_move_speed : float
+            Turtlebot's moving speed m/s
+        TB_move_noise : float
+            Turtlebot transition noise as a standard deviation of a normal distribution.
+        fetch_pass_obj_tc : int
+            The time-step cost for finishing the macro-action Pass-Obj. 
+        fetch_look_for_obj_tc : int
+            The time-step cost for finishing the macro-action Look-for-Obj. 
+        delay_delivery_penalty : bool
+            Whether apply penalty for delayed tool delivery.
+        """
 
         self.n_agent = 3
 
         #-----------------basic settings for this domain
-        self.n_objs = n_objs                             # define the number of different objects needs for each human to finish the whole task
-                                                         # remeber change the corresponding argument when change this parameter
-        self.n_each_obj = 1                              # total amount of each obj in the env
-        self.n_steps_human_task = self.n_objs + 1        # define the number of steps for each human finishing the task 
+        # define the number of different objects needs for each human to finish the whole task
+        self.n_objs = n_objs
+        # total amount of each obj in the env
+        self.n_each_obj = n_each_obj
+        # define the number of steps for each human finishing the task 
+        self.n_steps_human_task = self.n_objs + 1
 
         #-----------------def belief waypoints
         BWP0 = BeliefWayPoint('WorkArea0', 0, 6.0, 3.0)
@@ -75,8 +108,9 @@ class ObjSearchDelivery(gym.Env):
         #-----------------initialize Three Humans
         Human0 = AgentHuman(0, self.n_steps_human_task, self.human_speed[0]*4, list(range(self.n_objs)))
 
+        # recording the number of human who has finished his own task
         self.humans = [Human0]
-        self.n_human_finished = []   # recording the number of human who has finished his own task
+        self.n_human_finished = []
         
     def step(self, actions, debug=False):
         raise NotImplementedError
@@ -346,10 +380,10 @@ class ObjSearchDelivery(gym.Env):
 class ObjSearchDelivery_v4(ObjSearchDelivery):
 
     """1) Not distinguish Look_for_obj to different robot.
-       2) Turtlebot get tool and wait until fetch pass any obj to it or terminate it in 10s.
-       3) Turtlebot doesn't observe what human needs and just for delivery
-       4) bug on observe ready_objs"""
-
+       2) Turtlebot's macro-action "get tool" has two terminate conditions:
+            a) wait besides the table until fetch pass any obj to it;
+            b) terminates in certain amount of time, default is 10s.
+       3) Turtlebot observes human working status when locates at workshop room"""
 
     metadata = {
             'render.modes': ['human', 'rgb_array'],
@@ -407,6 +441,26 @@ class ObjSearchDelivery_v4(ObjSearchDelivery):
         self.agents = [Turtlebot1, Turtlebot2, Fetch_robot]
 
     def step(self, actions, debug=False):
+
+        """
+        Parameters
+        ----------
+        actions : int | List[..]
+           The discrete macro-action index for one or more agents. 
+
+        Returns
+        -------
+        cur_actions : int | List[..]
+            The discrete macro-action indice which agents are executing in the current step.
+        observations : ndarry | List[..]
+            A list of  each agent's macor-observation.
+        rewards : float
+            A global shared reward.
+        done : bool
+            Whether the current episode is over or not.
+        cur_action_done : binary (1/0) | List[..]
+            Whether each agent's curent macro-action is done or not.
+        """
 
         rewards = -1.0
         terminate = 0
