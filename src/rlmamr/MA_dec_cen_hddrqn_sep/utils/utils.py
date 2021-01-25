@@ -6,7 +6,21 @@ import random
 
 class Linear_Decay(object):
 
+    """A class for achieving value linear decay"""
+
     def __init__ (self, total_steps, init_value, end_value):
+
+        """
+        Parameters
+        ----------
+        total_steps : int
+            Total decay steps.
+        init_value : float
+            Initial value.
+        end_value : float
+            Ending value
+        """
+ 
         self.total_steps = total_steps
         self.init_value = init_value
         self.end_value = end_value
@@ -43,7 +57,47 @@ def get_conditional_action(actions, v):
     condi_a[v] = -1
     return condi_a 
 
-def save_check_point(agents, cen_controller, cur_step, n_epi, cur_hysteretic, cur_eps, save_dir, mem_cen, mem_dec, run_id, test_perform, max_save=2):
+def save_check_point(agents, 
+                     cen_controller, 
+                     cur_step, 
+                     n_epi, 
+                     cur_hysteretic, 
+                     cur_eps, 
+                     save_dir, 
+                     mem_cen, 
+                     mem_dec, 
+                     run_id, 
+                     test_perform, 
+                     max_save=2):
+
+    """
+    Parameters
+    ----------
+    agents : Agent | List[..]
+        A list of agent represented by an instance of Agent class.
+    cen_controller : Cen_Controller
+        An instance of Cen_Controller class.
+    cur_step : int
+        Current training step.
+    n_epi : int
+        Current training episode.
+    cur_hysteretic : float
+        Current hysteritic learning rate
+    cur_eps : float
+        Current epslion value.
+    save_dir : str
+        Directory name for saving ckpt
+    mem_cen : RepalyMemory 
+        Replay buffer for storing centralized experiences.
+    mem_dec : RepalyMemory 
+        Replay buffer for storing decentralized experiences.
+    run_id : int
+        Index of current run.
+    test_perform : float | List[..]
+        A list of testing discounted return
+    max_save : int
+        How many recent ckpt to be kept there.
+    """
 
     PATH = "./performance/" + save_dir + "/check_point/" + str(run_id) + "_cen_controller_" + "{}.tar"
 
@@ -87,7 +141,3 @@ def save_check_point(agents, cen_controller, cur_step, n_epi, cur_hysteretic, cu
                     'np_random_state': np.random.get_state(),
                     'torch_random_state': torch.random.get_rng_state()
                     }, PATH)
-
-
-
-
