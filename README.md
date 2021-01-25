@@ -81,7 +81,12 @@ These two methods are respectively the pure decentralized learning framework and
 
 - Encode the new macro/primitve-action domain as a gym env;
 - Add "obs_size", "n_action" and "action_spaces" as properties into the env class;
-- Let the step function return <a, o', r, t, v> instead of <o', r, t>, where a is the current macro/primitve action; o' is the new obs; r is the reward; t is termination; v is a binary value indicate whether the macro/primitive action terminates or not. In primitive-action version, v should be always 1. The dimension of "a, o', v" should be equal to the number of agents in the domain.
+- Let the step function return <a, o', r, t, v> instead of <o', r, t>, where
+  - a is the current macro/primitve actions indice of agents, **List[int]**; 
+  - o' is the new macro/premitive observations, **List[ndarry]**; 
+  - r is the reward, **float**; 
+  - t is whether terminates or not, **bool**;
+  - v is a binary value indicate whether each agent's macro/primitive action terminates or not, **List[int]**. In primitive-action version, v should be always 1.
 
 ## Visualization of the Trained Policies in Simulation
 
