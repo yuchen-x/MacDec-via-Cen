@@ -509,7 +509,7 @@ class Team_RNN(Team):
             step = 0
 
             last_obs, dec_h_states, cen_h_state = self.get_init_inputs()
-            last_valid = [torch.tensor([[1]], dtype=torch.uint8)] * self.n_agent
+            last_valid = [torch.tensor([[1]], dtype=torch.bool)] * self.n_agent
             cen_last_action = [torch.tensor([[-1]])] * self.n_agent
 
             while not t:
@@ -518,7 +518,7 @@ class Team_RNN(Team):
 
                 last_obs = [torch.from_numpy(o).float() for o in obs]
                 cen_last_action = [torch.tensor(a_idx).view(1,1) for a_idx in a]
-                last_valid = [torch.tensor(_v, dtype=torch.uint8).view(1,-1) for _v in v]
+                last_valid = [torch.tensor(_v, dtype=torch.bool).view(1,-1) for _v in v]
 
                 R += self.discount**step * r
                 step += 1

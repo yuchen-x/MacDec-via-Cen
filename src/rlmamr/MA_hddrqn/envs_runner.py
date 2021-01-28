@@ -137,6 +137,6 @@ class EnvsRunner(object):
         r = [torch.tensor(r).float().view(1,-1) for r in exp[2]]
         obs = [torch.from_numpy(o).float() for o in exp[3]]
         t = torch.tensor(exp[4]).float().view(1,-1)
-        v = [torch.tensor(v, dtype=torch.uint8).view(1,-1) for v in exp[5]]
+        v = [torch.tensor(v, dtype=torch.bool).view(1,-1) for v in exp[5]]
         return (last_obs, a, r, obs, t, v)
 

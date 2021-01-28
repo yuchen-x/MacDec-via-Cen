@@ -210,13 +210,7 @@ def main():
 
     params = vars(parser.parse_args())
 
-    if params['n_run'] > 1:
-        for i in range(params['n_run']):
-            params['run_id'] += i
-            params['seed'] += i
-            train(**params)
-    else:
-        train(**params)
+    train(**params)
 
 if __name__ == '__main__':
     main()

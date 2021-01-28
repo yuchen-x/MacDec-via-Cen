@@ -33,11 +33,11 @@ class ReplayMemory:
         self.ZERO_JOINT_ACT = [torch.tensor(0).view(1,-1)] * n_agent
         self.ZERO_ID_REWARD = [torch.tensor(0.0).view(1,-1)] * n_agent
         self.ZERO_JOINT_REWARD = torch.tensor(0.0).view(1,-1)
-        self.ZERO_ID_VALID = [torch.tensor(0, dtype=torch.uint8).view(1,-1)] * n_agent
-        self.ZERO_JOINT_VALID = torch.tensor(0, dtype=torch.uint8).view(1,-1)
+        self.ZERO_ID_VALID = [torch.tensor(0, dtype=torch.bool).view(1,-1)] * n_agent
+        self.ZERO_JOINT_VALID = torch.tensor(0, dtype=torch.bool).view(1,-1)
 
-        self.ONE_ID_VALID = [torch.tensor(1, dtype=torch.uint8).view(1,-1)] * n_agent
-        self.ONE_JOINT_VALID = torch.tensor(1, dtype=torch.uint8).view(1,-1)
+        self.ONE_ID_VALID = [torch.tensor(1, dtype=torch.bool).view(1,-1)] * n_agent
+        self.ONE_JOINT_VALID = torch.tensor(1, dtype=torch.bool).view(1,-1)
 
         self.ZERO_PADDING = [(self.ZERO_JOINT_OBS, 
                               self.ZERO_JOINT_ACT, 

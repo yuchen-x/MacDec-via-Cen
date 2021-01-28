@@ -41,11 +41,11 @@ class DDRQN(nn.Module):
     def __init__(self, input_dim, output_dim, dec_mlp_layer_size=32, rnn_layer_num=1, dec_rnn_h_size=32, **kwargs):
         super(DDRQN, self).__init__()
 
-        self.fc1 = Linear(input_dim, dec_mlp_layer_size)
-        self.fc2 = Linear(dec_mlp_layer_size, dec_rnn_h_size)
+        self.fc1 = Linear(input_dim, dec_rnn_h_size)
+        # self.fc2 = Linear(dec_mlp_layer_size, dec_rnn_h_size)
         self.lstm = nn.LSTM(dec_rnn_h_size, hidden_size=dec_rnn_h_size, num_layers=rnn_layer_num, batch_first=True)
-        self.fc3 = Linear(dec_rnn_h_size, dec_mlp_layer_size)
-        self.fc4 = Linear(dec_mlp_layer_size, output_dim, act_fn='linear')
+        # self.fc3 = Linear(dec_rnn_h_size, dec_mlp_layer_size)
+        self.fc2 = Linear(dec_rnn_h_size, output_dim, act_fn='linear')
        
     def forward(self, x, h=None):
         xx = pad_sequence(x, padding_value=torch.tensor(float('nan')), batch_first=True)
@@ -53,14 +53,14 @@ class DDRQN(nn.Module):
         x = pad_sequence(x, padding_value=torch.tensor(0.0), batch_first=True)
 
         x = F.leaky_relu(self.fc1(x))
-        x = F.leaky_relu(self.fc2(x))
+        # x = F.leaky_relu(self.fc2(x))
 
         x = pack_padded_sequence(x, mask.sum(1), batch_first=True, enforce_sorted=False)
         x, h = self.lstm(x, h)
         x = pad_packed_sequence(x, padding_value=torch.tensor(0.0), batch_first=True)[0]
 
-        x = F.leaky_relu(self.fc3(x))
-        x = self.fc4(x)
+        # x = F.leaky_relu(self.fc3(x))
+        x = self.fc2(x)
         x = x[mask]
 
         return x, h
@@ -71,10 +71,10 @@ class Cen_DDRQN(nn.Module):
         super(Cen_DDRQN, self).__init__()
 
         self.fc1 = Linear(input_dim, cen_mlp_layer_size)
-        self.fc2 = Linear(cen_mlp_layer_size, cen_rnn_h_size)
+        # self.fc2 = Linear(cen_mlp_layer_size, cen_rnn_h_size)
         self.lstm = nn.LSTM(cen_rnn_h_size, hidden_size=cen_rnn_h_size, num_layers=rnn_layer_num, batch_first=True)
-        self.fc3 = Linear(cen_rnn_h_size, cen_mlp_layer_size)
-        self.fc4 = Linear(cen_mlp_layer_size, output_dim, act_fn='linear')
+        # self.fc3 = Linear(cen_rnn_h_size, cen_mlp_layer_size)
+        self.fc2 = Linear(cen_rnn_h_size, output_dim, act_fn='linear')
        
     def forward(self, x, h=None):
         xx = pad_sequence(x, padding_value=torch.tensor(float('nan')), batch_first=True)
@@ -82,14 +82,14 @@ class Cen_DDRQN(nn.Module):
         x = pad_sequence(x, padding_value=torch.tensor(0.0), batch_first=True)
 
         x = F.leaky_relu(self.fc1(x))
-        x = F.leaky_relu(self.fc2(x))
+        # x = F.leaky_relu(self.fc2(x))
 
         x = pack_padded_sequence(x, mask.sum(1), batch_first=True, enforce_sorted=False)
         x, h = self.lstm(x, h)
         x = pad_packed_sequence(x, padding_value=torch.tensor(0.0), batch_first=True)[0]
 
-        x = F.leaky_relu(self.fc3(x))
-        x = self.fc4(x)
+        # x = F.leaky_relu(self.fc3(x))
+        x = self.fc2(x)
         x = x[mask]
 
         return x, h

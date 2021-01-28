@@ -16,7 +16,7 @@ class ReplayMemory:
         self.ZERO_JOINT_OBS = [torch.zeros(s) for s in obs_size]
         self.ZERO_JOINT_ACT = [torch.tensor(0).view(1,-1)] * n_agent
         self.ZERO_JOINT_REWARD = [torch.tensor(0.0).view(1,-1)] * n_agent
-        self.ZERO_JOINT_VALID = [torch.tensor(0, dtype=torch.uint8).view(1,-1)] * n_agent
+        self.ZERO_JOINT_VALID = [torch.tensor(0, dtype=torch.bool).view(1,-1)] * n_agent
 
         self.buf = deque(maxlen=size)
 

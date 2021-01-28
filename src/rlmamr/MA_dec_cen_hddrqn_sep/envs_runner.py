@@ -174,7 +174,7 @@ class EnvsRunner(object):
         return [torch.from_numpy(o).float() for o in obs]
 
     def valid_to_tensor(self,valid):
-        return [torch.tensor(v, dtype=torch.uint8).view(1,-1) for v in valid]
+        return [torch.tensor(v, dtype=torch.bool).view(1,-1) for v in valid]
 
     def action_to_tensor(self,action):
         return [torch.tensor(a).view(1,1) for a in action]
@@ -186,7 +186,7 @@ class EnvsRunner(object):
         acc_joint_r = torch.tensor(exp[3]).float().view(1,-1)
         obs = [torch.from_numpy(o).float() for o in exp[4]]
         t = torch.tensor(exp[5]).float().view(1,-1)
-        id_v = [torch.tensor(v, dtype=torch.uint8).view(1,-1) for v in exp[6]]
-        joint_v = torch.tensor(exp[7], dtype=torch.uint8).view(1,-1)
+        id_v = [torch.tensor(v, dtype=torch.bool).view(1,-1) for v in exp[6]]
+        joint_v = torch.tensor(exp[7], dtype=torch.bool).view(1,-1)
         return (last_obs, a, acc_id_r, acc_joint_r, obs, t, id_v, joint_v)
 
