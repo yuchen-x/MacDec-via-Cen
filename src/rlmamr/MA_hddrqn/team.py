@@ -115,7 +115,7 @@ class Team_RNN(Team):
     def __init__(self, env, n_env, memory, n_agent, training_method, h_stable_at, discount=0.99, batch_norm=False, sample_epi=False, 
                  dynamic_h=False, hysteretic=None, h_explore=False, soft_action_selection=False, epsilon_end=0.1, epsilon_linear_decay=False, epsilon_linear_decay_steps=0, 
                  epsilon_exp_decay=False, optimizer='Adam', learning_rate=0.001, device='cpu', save_dir=None, 
-                 nn_model_params={}, **hyper_params):
+                 logger=None, nn_model_params={}, **hyper_params):
 
         super(Team_RNN, self).__init__(env, memory, n_agent, h_stable_at, dynamic_h, hysteretic, discount,
                                        epsilon_end, epsilon_linear_decay, epsilon_linear_decay_steps)
@@ -148,6 +148,9 @@ class Team_RNN(Team):
         # create agents
         self.create_agents()
 
+        self.logger=logger
+        self.eval_niter = 0
+
     def create_agents(self):
         self.agents=[]
         if self.batch_norm:
@@ -178,6 +181,9 @@ class Team_RNN(Team):
             self.evaluate()
             with open("./performance/" + self.save_dir + "/test/test_perform" + str(idx_run) + ".pickle", 'wb') as handle:
                 pickle.dump(self.TEST_PERFORM, handle)
+            if self.logger is not None:
+                self.logger.add_scalar('Test/Return', self.TEST_PERFORM[-1], self.eval_niter)
+                self.eval_niter += 1
 
         self.step_count += 1.0
 
@@ -188,6 +194,9 @@ class Team_RNN(Team):
             self.evaluate()
             with open("./performance/" + self.save_dir + "/test/test_perform" + str(idx_run) + ".pickle", 'wb') as handle:
                 pickle.dump(self.TEST_PERFORM, handle)
+            if self.logger is not None:
+                self.logger.add_scalar('Test/Return', self.TEST_PERFORM[-1], self.eval_niter)
+                self.eval_niter += 1
 
             if self.TEST_PERFORM[-1] == np.max(self.TEST_PERFORM):
                 for agent in self.agents:

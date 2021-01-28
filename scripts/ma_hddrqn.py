@@ -17,6 +17,8 @@ from rlmamr.MA_hddrqn.utils.utils import save_check_point
 from rlmamr.MA_hddrqn.learning_methods import QLearn_squ
 
 from IPython.core.debugger import set_trace
+from tensorboardX import SummaryWriter
+from gym_pybullet_drones.macro_action_envs import MacActEnvWrapper
 
 ENVIRONMENTS = {
         'BP_MA': BP_MA,
@@ -34,8 +36,12 @@ def train(env_name, grid_dim, obs_one_hot, target_flick_prob, agent_trans_noise,
     # define the name of the directory to be created
     os.makedirs("./performance/"+save_dir+"/train", exist_ok=True)
     os.makedirs("./performance/"+save_dir+"/test", exist_ok=True)
+    os.makedirs("./performance/"+save_dir+"/log/run"+str(run_id), exist_ok=True)
     os.makedirs("./performance/"+save_dir+"/check_point", exist_ok=True)
     os.makedirs("./policy_nns/"+save_dir, exist_ok=True)
+
+    logger = SummaryWriter(logdir="./performance/"+save_dir+"/log/run"+str(run_id),
+                           flush_secs=60)
 
     if seed is not None:
         seed = seed *10
@@ -45,14 +51,22 @@ def train(env_name, grid_dim, obs_one_hot, target_flick_prob, agent_trans_noise,
     torch.set_num_threads(1)
 
     # create env 
-    ENV = ENVIRONMENTS[env_name]
-    if env_name.startswith('OSD'):
-        env = ENV(terminate_step=env_terminate_step, human_speed_per_step=[h_speed_ps], TB_move_speed=tb_m_speed, TB_move_noisy=tb_m_noisy, fetch_pass_obj_tc=f_p_obj_tc, fetch_look_for_obj_tc=f_l_obj_tc, delay_delivery_penalty=d_d_p)
-    elif env_name.startswith('BP'):
-        env = ENV(tuple(grid_dim),terminate_step=env_terminate_step)
-    elif env_name.startswith('CT'):
-        env = ENV(1,2,tuple(grid_dim),terminate_step=env_terminate_step,obs_one_hot=obs_one_hot, 
-                  target_flick_prob=target_flick_prob, agent_trans_noise=agent_trans_noise, tgt_random_move=target_rand_move)
+    # ENV = ENVIRONMENTS[env_name]
+    # if env_name.startswith('OSD'):
+    #     env = ENV(terminate_step=env_terminate_step, human_speed_per_step=[h_speed_ps], TB_move_speed=tb_m_speed, TB_move_noisy=tb_m_noisy, fetch_pass_obj_tc=f_p_obj_tc, fetch_look_for_obj_tc=f_l_obj_tc, delay_delivery_penalty=d_d_p)
+    # elif env_name.startswith('BP'):
+    #     env = ENV(tuple(grid_dim),terminate_step=env_terminate_step)
+    # elif env_name.startswith('CT'):
+    #     env = ENV(1,2,tuple(grid_dim),terminate_step=env_terminate_step,obs_one_hot=obs_one_hot, 
+    #               target_flick_prob=target_flick_prob, agent_trans_noise=agent_trans_noise, tgt_random_move=target_rand_move)
+    # else:
+    env = MacActEnvWrapper(env_name,
+                           num_blue_drones=2,
+                           aggregate_phy_steps=5,
+                           gui=False,
+                           episode_len_sec=10,
+                           max_fire_rate_hz=0.5
+                           )
  
     # create replay buffer
     if sample_epi:
@@ -94,7 +108,7 @@ def train(env_name, grid_dim, obs_one_hot, target_flick_prob, agent_trans_noise,
 
     # create team
     team = Team_RNN(env, n_env, memory, env.n_agent, QLearn_squ, h_stable_at,
-            save_dir=save_dir, nn_model_params=model_params, **hyper_params)
+            save_dir=save_dir, logger=logger, nn_model_params=model_params, **hyper_params)
 
     t = time.time()
     training_count=0
@@ -129,8 +143,8 @@ def train(env_name, grid_dim, obs_one_hot, target_flick_prob, agent_trans_noise,
                 save_check_point(team.agents, step, team.episode_count, team.hysteretic, team.epsilon, save_dir, team.memory, run_id, team.TEST_PERFORM) 
                 sys.exit()
             target_updating_count += 1 
-            print('[{}]run, [{:.1f}K] took {:.3f}hr to finish {} episodes {} trainning and {} target_net updating (eps={})'.format(
-                    run_id, step/1000, (time.time()-t)/3600, team.episode_count, training_count, target_updating_count, team.epsilon))
+            print('[{}]run, [{:.1f}K] took {:.3f}hr to finish {} episodes {} trainning and {} target_net updating (eps={}) latest return ({})'.format(
+                    run_id, step/1000, (time.time()-t)/3600, team.episode_count, training_count, target_updating_count, team.epsilon, team.TEST_PERFORM[-1]))
         step += 1
 
     if team.episode_count == total_epi and save_ckpt:
