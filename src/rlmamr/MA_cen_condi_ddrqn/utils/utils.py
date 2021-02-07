@@ -9,7 +9,21 @@ from IPython.core.debugger import set_trace
 
 class Linear_Decay(object):
 
-    def __init__ (self, total_steps, init_value, end_value):
+    def __init__ (self, 
+                  total_steps, 
+                  init_value, 
+                  end_value):
+        """
+        Parameters
+        ----------
+        total_steps : int
+            Total decay steps.
+        init_value : float
+            Initial value.
+        end_value : float
+            Ending value
+        """
+
         self.total_steps = total_steps
         self.init_value = init_value
         self.end_value = end_value
@@ -27,6 +41,7 @@ def get_joint_a(a_idxes, n_actions):
     return np.sum([a_idx if i == 0 else a_idx * np.prod(n_actions[:i]) for i, a_idx in enumerate(a_idxes)])
 
 def _prune_o(obs, id_valid):
+
     """Given an joint experience (o,a,o',r), the element in o of Q(o,a) which is learnt 
     should be zero if the previous action is not done yet."""
 
@@ -40,6 +55,7 @@ def _prune_o(obs, id_valid):
     return tuple(obs)
 
 def _prune_o_n(obs, id_valid):
+
     """Given an experience (o,a,o',r), the element in o' of argmax_a' Q(o',a') 
     should be zero if the current action a is not done yet."""
 
@@ -104,12 +120,7 @@ def _prune_filtered_o_n(obs, id_valid):
 
 def save_check_point(cen_controller, cur_step, n_epi, cur_hysteretic, cur_eps, save_dir, mem, run_id, test_perform, max_save=2):
 
-    #PATH = "./performance/" + save_dir + "/check_point/" + str(run_id) + "_agent_" + str(agent.idx) + ".{}tar"
     PATH = "./performance/" + save_dir + "/check_point/" + str(run_id) + "_cen_controller_" + "1.tar"
-
-    # for n in list(range(max_save-1, 0, -1)):
-    #     os.system('cp -rf ' + PATH.format(n) + ' ' + PATH.format(n+1) )
-    # PATH = PATH.format(1)
 
     torch.save({
                 'cur_step': cur_step,

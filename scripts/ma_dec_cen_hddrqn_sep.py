@@ -154,7 +154,7 @@ def train(env_name, grid_dim, obs_one_hot, target_flick_prob, agent_trans_noise,
             print('[{}]run, [{:.1f}K] took {:.3f}hr to finish {} episodes {} trainning and {} target_net updating (eps={})'.format(
                     run_id, step/1000, (time.time()-t)/3600, team.episode_count, training_count, target_updating_count, team.epsilon), flush=True)
         step += 1
-    
+
     if team.episode_count == total_epi and save_ckpt:
         save_check_point(team.agents, team.cen_controller, step, team.episode_count, team.hysteretic, team.epsilon, save_dir, team.memory_cen, team.memory_dec, run_id, team.TEST_PERFORM) 
         print("Finish entire training ... ")

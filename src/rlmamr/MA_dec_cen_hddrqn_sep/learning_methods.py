@@ -41,7 +41,7 @@ def QLearn_squ_dec_cen_0(env,
     discount : float
         Discount factor for learning.
     trace_len : int
-        The length of the longest episode.
+        The lengths of the centralized episode and decentralized episode.
     sub_trace_len : int
         The length of the shortes episode for filtering.
     batch_size : int

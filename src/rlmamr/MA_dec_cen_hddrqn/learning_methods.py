@@ -8,9 +8,61 @@ from torch.nn.utils import clip_grad_norm_
 from IPython.core.debugger import set_trace
 from .utils.utils import get_conditional_action, get_conditional_argmax
 
-def QLearn_squ_dec_cen_0(env, agents, cen_controller, batches, hysteretic, discount, trace_len, sub_trace_len, batch_size, sort_traj=False,
-                       huber_loss=False, grad_clip=False, grad_clip_value=None,
-                       grad_clip_norm=False, grad_clip_max_norm=None, rnn=True, device='cpu', **kwargs):
+def QLearn_squ_dec_cen_0(env, 
+                         agents, 
+                         cen_controller, 
+                         batches, 
+                         hysteretic, 
+                         discount, 
+                         trace_len, 
+                         sub_trace_len, 
+                         batch_size, 
+                         sort_traj=False,
+                         huber_loss=False, 
+                         grad_clip=False, 
+                         grad_clip_value=None,
+                         grad_clip_norm=False, 
+                         grad_clip_max_norm=None, 
+                         rnn=True, 
+                         device='cpu', 
+                         **kwargs):
+
+    """
+    Parameters
+    ----------
+    env : gym.env
+        A macro-action-based gym envrionment.
+    agents : Agent | List[..]
+        A list of agent represented by an instance of Agent class.
+    cen_controller : Cen_Controller
+         An instance of Cen_Controller class.
+    batches : List[List[tupe(..)]] 
+        A list of each agent's episodic experiences, whoses size equals to the number of agents.
+    discount : float
+        Discount factor for learning.
+    trace_len : int
+        The length of the longest episode.
+    sub_trace_len : int
+        The length of the shortes episode for filtering.
+    batch_size : int
+        The number of episodes/sequences in a batch.
+    sort_traj : bool
+        Whether sort the sampled episodes/sequences according to each episode's valid length after squeezing operation. 
+    huber_loss : bool
+        Whether apply huber loss or not.
+    grad_clip : bool
+        Whether use gradient clip or not.
+    grad_clip_value : float
+        Absolute value limitation for gradient clip.
+    grad_clip_norm : bool
+        Whether use norm-based gradient clip
+    grad_clip_max_norm : float
+        Norm limitation for gradient clip.
+    rnn : bool
+        whether use rnn-agent or not.
+    device : str
+        Which device (CPU/GPU) to use.
+    """
 
     """y_i = r_i + max_a'Q_w-(h_t+1^i, argmax_a_t+1^i Q_cen(h_t+1, a_t+1 | a_/i_undone))"""
 

@@ -27,9 +27,47 @@ OPTIMIZERS = {'Adam': Adam,
               'RMSprop': RMSprop}
 
 class Team:
-    
-    def __init__(self, env, memory, n_agent, h_stable_at, dynamic_h=False, hysteretic=None, discount=0.99,
-                 epsilon_end = 0.1, epsilon_linear_decay=False, epsilon_linear_decay_steps=0):
+
+    """Base class of a team of agents"""
+
+    def __init__(self, 
+                 env,
+                 memory, 
+                 n_agent, 
+                 h_stable_at, 
+                 dynamic_h=False, 
+                 hysteretic=None, 
+                 discount=0.99,
+                 epsilon_end = 0.1, 
+                 epsilon_linear_decay=False, 
+                 epsilon_linear_decay_steps=0):
+
+        """
+        Parameters
+        ----------
+        env : gym.env
+            A gym environment.
+        memory : ReplayBuffer
+            An instances of the ReplayBuffer class.
+        n_agent : int
+            The number of agent.
+        h_stable_at : int
+            The number of dacaying episodes/stpes for hysteretic learning rate.
+        dynamic_h : bool
+            Whether apply hysteratic learning rate decay.
+        hysteretic : tuple
+            A tuple of initialzed and ending hysteritic learning rates.
+        discount : float
+            Discount factor for learning.
+        epsilon_end : float
+            The ending value of epsilon.
+        epsilon_linear_decay : bool
+            Whether apply epsilon decay for explorating policy
+        epsilon_linear_decay_steps : int
+            The number of episodes/steps for epsilon decay
+        """
+
+
         self.env = env
         self.n_agent = n_agent
         self.memory = memory
@@ -124,11 +162,81 @@ class Team:
 
 class Team_RNN(Team):
 
-    def __init__(self, env, n_env, memory, n_agent, training_method, h_stable_at, discount=0.99, sample_epi=False, 
-                 dynamic_h=False, hysteretic=None, h_explore=False, cen_explore=False, cen_explore_end=float('inf'), 
-                 explore_switch=False, soft_action_selection=False, epsilon_end=0.1, epsilon_linear_decay=False, epsilon_linear_decay_steps=0, epsilon_exp_decay=False, 
-                 optimizer='Adam', learning_rate=0.001, device='cpu', save_dir=None, 
-                 nn_model_params={}, **hyper_params):
+    def __init__(self, 
+                 env, 
+                 n_env, 
+                 memory, 
+                 n_agent, 
+                 training_method, 
+                 h_stable_at, 
+                 discount=0.99, 
+                 sample_epi=False, 
+                 dynamic_h=False, 
+                 hysteretic=None, 
+                 h_explore=False, 
+                 cen_explore=False, 
+                 cen_explore_end=float('inf'), 
+                 explore_switch=False, 
+                 soft_action_selection=False, 
+                 epsilon_end=0.1, 
+                 epsilon_linear_decay=False, 
+                 epsilon_linear_decay_steps=0, 
+                 epsilon_exp_decay=False, 
+                 optimizer='Adam', 
+                 learning_rate=0.001, 
+                 device='cpu', 
+                 save_dir=None, 
+                 nn_model_params={}, 
+                 **hyper_params):
+
+        """
+        Parameters
+        ----------
+        env : gym.env
+            A gym environment.
+        n_env : int
+            The number of envs running in parallel.
+        memory : ReplayBuffer
+            An instances of the ReplayBuffer class.
+        n_agent : int
+            The number of agent.
+        training_method : python function
+            A algorithm for calculating loss and performing optimization.
+        h_stable_at : int
+            The number of dacaying episodes/stpes for hysteretic learning rate.
+        discount : float
+            Discount factor for learning.
+        sample_epi : bool
+            Whether simples entire episode in mini-batch learning.
+        dynamic_h : bool
+            Whether apply hysteratic learning rate decay.
+        hysteretic : tuple
+            A tuple of initialzed and ending hysteritic learning rates.
+        h_explore : bool
+            Whether uses history-based exploring policy.
+        soft_action_selection : bool
+            Whether apply soft action selection.
+        epsilon_end : float
+            The ending value of epsilon-based exlporation policy
+        epsilon_linear_decay : bool
+            Whether apply epsilon decay for explorating policy
+        epsilon_linear_decay_steps : int
+            The number of episodes/steps for epsilon decay
+        epsilon_exp_decay : bool
+            Whether apply exponentially decay for epsilon.
+        optimizer : str
+            Name of an optimizer.
+        learning_rate : float
+            Learning rate.
+        device : str
+            CPU/GPU for training.
+        save_dir : str
+            Name of a directory to save results/ckpt.
+        nn_model_params : dict[..]
+            A dictionary of network parameters.
+        hyper_params : dict[..] 
+            A dictionary of some rest hyper-parameters.
+        """
 
         super(Team_RNN, self).__init__(env, memory, n_agent, h_stable_at, dynamic_h, hysteretic, discount,
                                        epsilon_end, epsilon_linear_decay, epsilon_linear_decay_steps)
@@ -212,7 +320,40 @@ class Team_RNN(Team):
             PATH = "./policy_nns/" + self.save_dir + "/cen_controller.pt"
             torch.save(self.cen_controller.policy_net, PATH)
 
-    def get_next_actions(self, joint_obs, dec_h_states, cen_h_state, cen_last_action, last_valid, eval=False):
+    def get_next_actions(self, 
+                         joint_obs, 
+                         dec_h_states, 
+                         cen_h_state, 
+                         cen_last_action, 
+                         last_valid, 
+                         eval=False):
+
+        """
+        Parameters
+        ----------
+        joint_obs : ndarry | List[..]
+            A list of each agent's observation.
+        dec_h_states : ndarry | List[..]
+            A list of hidden state of each agent's rnn-net
+        cen_h_state : ndarry | Tuple(..)
+            A tuple of hidden state of centralized rnn-net
+        cen_last_action : int | List[..]
+            A list of indice of agents' previous macro-actions selected by centralized policy.
+        last_valid : binary (1/0) | List[..]
+            A list of binary values indicates whether each agent has finished the previous macro-action or not.
+        eval : bool
+            Whether use evaluation mode or not.
+
+        Returns
+        -------
+        actions : int | List[..]
+            A list of indice of agents' macro-actions selected by either centralized policy or decentralized policy.
+        dec_h_state : ndarry | tuple(..)
+            A tuple of hidden states of decentralized rnn net.
+        cen_h_state : ndarry | tuple(..)
+            A tuple of hidden states of centralized rnn net.
+        """
+
         # explore using dec policies
         with torch.no_grad():
             dec_actions = []
@@ -282,6 +423,19 @@ class Team_RNN(Team):
         return [torch.from_numpy(i).float() for i in self.env.reset()], [None]*self.n_agent, None
 
     def dec_sep_joint_exps(self, joint_exps):
+
+        """
+        Parameters
+        ----------
+        joint_exps : List[List[tuple(..)]]
+            A sampled batch of episodes/sequences, whose size equals to the number of episodes..
+
+        Return
+        ------
+        exps : List[List[List(..)]]
+            A separeted batch of episdoes/sequences for each agent, whose size equals to the number of agents. 
+        """
+ 
         # seperate the joint experience for individual agents
         exps = [[] for _ in range(self.n_agent)]
         for o, a, id_r, j_r, o_n, t, id_v, j_v in chain(*joint_exps):
@@ -290,6 +444,19 @@ class Team_RNN(Team):
         return exps
     
     def cen_sep_joint_exps(self, joint_exps):
+
+        """
+        Parameters
+        ----------
+        joint_exps : List[List[tuple(..)]]
+            A sampled batch of episodes/sequences, whose size equals to the number of episodes..
+
+        Return
+        ------
+        exps : List[List(..)]
+            A batch of episdoes/sequences of joint experiences.
+        """
+
         # seperate the joint experience for individual agents
         exp = []
         for o, a, id_r, j_r, o_n, t, id_v, j_v in chain(*joint_exps):

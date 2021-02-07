@@ -20,7 +20,7 @@ class Linear_Decay(object):
         end_value : float
             Ending value
         """
- 
+
         self.total_steps = total_steps
         self.init_value = init_value
         self.end_value = end_value
