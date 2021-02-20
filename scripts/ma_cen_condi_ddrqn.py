@@ -30,7 +30,8 @@ def train(env_name, grid_dim, obs_one_hot, target_flick_prob, agent_trans_noise,
           dynamic_h, init_h, end_h, h_stable_at, eps_l_d, eps_l_d_steps, eps_end, eps_e_d, softmax_explore, h_explore, db_step,
           optim, l_rate, discount, huber_l, g_clip, g_clip_v, g_clip_norm, g_clip_max_norm,
           start_train, train_freq, target_update_freq, trace_len, sub_trace_len, batch_size,
-          sort_traj, rnn, mlp_layer_size, rnn_layer_num, rnn_h_size, gru, run_id, resume, save_ckpt, seed, save_dir, device, **kwargs):
+          sort_traj, rnn, mlp_layer_size, rnn_layer_num, rnn_h_size, gru, run_id, 
+          eval_freq, resume, save_ckpt, seed, save_dir, device, **kwargs):
 
     # define the name of the directory to be created
     os.makedirs("./performance/"+save_dir+"/train", exist_ok=True)
@@ -87,7 +88,7 @@ def train(env_name, grid_dim, obs_one_hot, target_flick_prob, agent_trans_noise,
                     'sub_trace_len': sub_trace_len,
                     'batch_size': batch_size,
                     'sort_traj': sort_traj,
-                    'device':device}
+                    'device': device}
 
 
     model_params = {'mlp_layer_size': mlp_layer_size,
@@ -97,7 +98,7 @@ def train(env_name, grid_dim, obs_one_hot, target_flick_prob, agent_trans_noise,
 
     # create team
     team = Team_RNN(env, n_env, memory, env.n_agent, QLearns[cen_mode], h_stable_at,
-            save_dir=save_dir, nn_model_params=model_params, **hyper_params)
+            save_dir=save_dir, nn_model_params=model_params, eval_freq=eval_freq, **hyper_params)
 
     t = time.time()
     training_count=0
@@ -175,7 +176,7 @@ def main():
     parser.add_argument('--h_stable_at',        action='store',        type=int,             default=4*1000,        help='Decaying period according to episodes/steps')
 
     parser.add_argument('--eps_l_d',            action='store_true',                                                help='Whether use epsilon linear decay for exploartion or not')
-    parser.add_argument('--eps_l_d_steps',      action='store',        type=int,             default=6*1000,        help='Decaying period according to episodes/steps')
+    parser.add_argument('--eps_l_d_steps',      action='store',        type=int,             default=4*1000,        help='Decaying period according to episodes/steps')
     parser.add_argument('--eps_end',            action='store',        type=float,           default=0.1,           help='Ending value of epsilon')
     parser.add_argument('--eps_e_d',            action='store_true',                                                help='Whether use episode-based epsilon linear decay or not')
     parser.add_argument('--softmax_explore',    action='store_true',                                                help='Whether apply softmac for exploration')
@@ -205,6 +206,7 @@ def main():
     parser.add_argument('--rnn_h_size',         action='store',         type=int,            default=64,            help='RNN hidden layer dimension')
     parser.add_argument('--gru',                action='store_true',                                                help='Whether use gru or not')
 
+    parser.add_argument('--eval_freq',          action='store',         type=int,            default=100,           help='Pause training every 100 episodes for evaluation')
     parser.add_argument('--resume',             action='store_true',                                                help='Whether use saved ckpt to continue training or not')
     parser.add_argument('--save_ckpt',          action='store_true',                                                help='Whether save ckpt or not')
     parser.add_argument('--run_id',             action='store',         type=int,            default=0,             help='Index of a run')

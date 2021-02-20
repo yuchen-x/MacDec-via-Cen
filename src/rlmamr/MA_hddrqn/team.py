@@ -40,7 +40,8 @@ class Team:
                  discount=0.99,
                  epsilon_end=0.1, 
                  epsilon_linear_decay=False, 
-                 epsilon_linear_decay_steps=0):
+                 epsilon_linear_decay_steps=0,
+                 eval_freq=100):
 
         """
         Parameters
@@ -65,6 +66,8 @@ class Team:
             Whether apply epsilon decay for explorating policy
         epsilon_linear_decay_steps : int
             The number of episodes/steps for epsilon decay
+        eval_freq : int
+            The frequency to perform evaluation.
         """
 
         self.env = env
@@ -86,6 +89,8 @@ class Team:
         self.epsilon = EPS_START
         self.epsilon_linear_decay = epsilon_linear_decay
         self.eps_l_d = Linear_Decay(epsilon_linear_decay_steps, EPS_START, epsilon_end)
+
+        self.eval_freq=eval_freq
         
         self.HYSTERESIS_STABLE_AT = h_stable_at
 
@@ -172,6 +177,7 @@ class Team_RNN(Team):
                  optimizer='Adam', 
                  learning_rate=0.001, 
                  device='cpu', 
+                 eval_freq=100,
                  save_dir=None, 
                  nn_model_params={}, 
                  **hyper_params):
@@ -221,6 +227,8 @@ class Team_RNN(Team):
             Learning rate.
         device : str
             CPU/GPU for training.
+        eval_freq : int
+            The frequency to perform evaluation.
         save_dir : str
             Name of a directory to save results/ckpt.
         nn_model_params : dict[..]
@@ -230,7 +238,7 @@ class Team_RNN(Team):
         """
 
         super(Team_RNN, self).__init__(env, memory, n_agent, h_stable_at, dynamic_h, hysteretic, discount,
-                                       epsilon_end, epsilon_linear_decay, epsilon_linear_decay_steps)
+                                       epsilon_end, epsilon_linear_decay, epsilon_linear_decay_steps, eval_freq)
 
         # create multiprocessor for multiple envs running parallel
         self.envs_runner = EnvsRunner(self.env, self.memory, n_env, h_explore, self.get_next_actions)
@@ -296,7 +304,7 @@ class Team_RNN(Team):
         n_episode_done = self.envs_runner.step()
         self.episode_count += n_episode_done
 
-        if n_episode_done > 0 and not self.episode_count % 10:
+        if n_episode_done > 0 and not self.episode_count % self.eval_freq:
             self.evaluate()
 
             with open("./performance/" + self.save_dir + "/test/test_perform" + str(idx_run) + ".pickle", 'wb') as handle:
@@ -404,7 +412,7 @@ class Team_RNN(Team):
                 a, last_obs, r, t, v = self.env.step(a)
                 last_obs = [torch.from_numpy(o).float() for o in last_obs]
                 last_valid = v
-                R += self.discount**step * r
+                R += self.discount**step * sum(r)/self.env.n_agent
                 step += 1
                 #R += r
 
