@@ -177,19 +177,32 @@ class astar_Agent_(object):
                                 self.cur_action_done = True
                     else:
                         self.cur_action_time_left = -1.0
-        elif action == 5:
-            if self.ori == 0:
-                self.ori = 3
+        elif action in [5,6]:
+            # trans noisy
+            if np.random.rand() > 0.9:
+                if self.ori == 0:
+                    self.ori = np.random.choice([0,1,3])
+                elif self.ori == 1:
+                    self.ori = np.random.choice([0,1,2])
+                elif self.ori == 2:
+                    self.ori = np.random.choice([1,2,3])
+                else:
+                    self.ori = np.random.choice([2,3,0])
+                self.cur_action_done = True
             else:
-                self.ori -= 1
-            self.cur_action_done = True
-        
-        elif action == 6:
-            if self.ori == 3:
-                self.ori = 0
-            else:
-                self.ori += 1
-            self.cur_action_done = True
+                if action == 5:
+                    if self.ori == 0:
+                        self.ori = 3
+                    else:
+                        self.ori -= 1
+                    self.cur_action_done = True
+                
+                elif action == 6:
+                    if self.ori == 3:
+                        self.ori = 0
+                    else:
+                        self.ori += 1
+                    self.cur_action_done = True
         elif action == 7:
             self.cur_action_done = True
  
@@ -218,14 +231,38 @@ class astar_Agent_(object):
             f = h + COST[self.ori]
             dest_idx = f.argmin()
             if COST[self.ori][dest_idx] == 0.0:
+                # trans noisy
+                if np.random.rand() > 0.9:
+                    valid = []
+                    for idx, pos in enumerate(moves):
+                        if ((pos > self.xlen).any() or (pos < 0).any()):
+                            continue
+                        for box in boxes:
+                            if (pos[0] == box.xcoord and pos[1]==box.ycoord):
+                                continue
+                        valid.append(idx)
+                    valid.remove(dest_idx)
+                    dest_idx = np.random.choice(valid)
                 self.xcoord = moves[dest_idx][0]
                 self.ycoord = moves[dest_idx][1]
-            elif COST[self.ori][dest_idx] == 0.2:
-                self.ori += 1
-                if self.ori > 3:
-                    self.ori = 0
             else:
-                self.ori = dest_idx
+                # trans noisy
+                if np.random.rand() > 0.9:
+                    if self.ori == 0:
+                        self.ori = np.random.choice([0,1,3])
+                    elif self.ori == 1:
+                        self.ori = np.random.choice([0,1,2])
+                    elif self.ori == 2:
+                        self.ori = np.random.choice([1,2,3])
+                    else:
+                        self.ori = np.random.choice([2,3,0])
+                else:
+                    if COST[self.ori][dest_idx] == 0.2:
+                        self.ori += 1
+                        if self.ori > 3:
+                            self.ori = 0
+                    else:
+                        self.ori = dest_idx
             
             if self.xcoord == bwp.xcoord and self.ycoord == bwp.ycoord and self.ori==0:
                 self.cur_BWP = self.BWPs[bwp.idx]

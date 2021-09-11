@@ -65,7 +65,7 @@ def test(env_name, env_terminate_step, grid_dim, n_agent, n_episode):
             a, last_obs, r, t, v = env.step(a,True)
             last_obs = [torch.from_numpy(o).float() for o in last_obs]
             last_valid = v
-            R += discount**step*r
+            R += discount**step*r[0]
             step += 1.0
         time.sleep(0.1)
 
